@@ -90,9 +90,26 @@ vec4 julia(vec2 p, vec2 seed) {
 
 const vec2 JULIA = vec2(-0.835, -0.2321);
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-  // Normalized pixel coordinates (from 0 to 1)
-  vec2 uv = (fragCoord - vec2(iResolution) / 2.0f) / iResolution.x * 3.36f;
+vec2 sceneTransform(vec2 screen) {
+  return (screen - vec2(iResolution) / 2.0f) / iResolution.x * 3.36f;
+}
 
-  fragColor = julia(uv, JULIA);
+// Square root of number of antialiasing samples 
+const int AA = 8;
+
+void mainImage(out vec4 outColor, in vec2 screen) {
+  vec4 sum = vec4(0.f);
+
+  const float aa_f = float(AA);
+
+  for (int i = 0; i < AA; i++) {
+    for (int j = 0; j < AA; j++) {
+      vec4 color = julia(
+        sceneTransform(screen + vec2(i, j) / aa_f),
+        JULIA);
+      sum += clamp(color, vec4(0.f), vec4(1.f));
+    }
+  }
+
+  outColor = sum / (aa_f * aa_f);
 }
