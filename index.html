@@ -66,6 +66,7 @@
         <!-- Pause Element -->
     </div>
     <!-- Screenshot Element -->
+    <button id="screenshot">Save (4K)</button>
     <!-- Reload Element -->
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -630,7 +631,7 @@ void main() {
             }, 'image/png', 1.0);
         };
 
-        let forcedScreenshotResolution = [0,0];
+        let forcedScreenshotResolution = [3840, 2160];
         if (forcedScreenshotResolution[0] <= 0 || forcedScreenshotResolution[1] <= 0) {
             renderer.render(scene, camera);
             doSaveScreenshot();
