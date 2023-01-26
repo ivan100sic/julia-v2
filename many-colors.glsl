@@ -122,13 +122,14 @@ vec2 sceneTransform(vec2 screen) {
   } else if (screen.x < QHD.x + FOURK.x) {
     // main monitor
     screen.x -= QHD.x;
-    physCoords = screen * monitorSize(MAIN_W).xy / FOURK.xy;
+    physCoords = screen * MAIN_WH / FOURK.xy;
   } else {
     // right screen
-    // TODO: implement
-    physCoords = (screen - QHD.xz - FOURK.xz) * monitorSize(SIDE_W).xy / QHD.xy
-      + monitorSize(SIDE_W).xz
-      + monitorSize(MAIN_W).xz;
+    screen.y -= FOURK.y - QHD.y;
+    screen.x -= QHD.x + FOURK.x;
+    physCoords = screen * SIDE_WH / QHD.xy;
+    physCoords.x += MAIN_W;
+    physCoords.y += MAIN_H - SIDE_H;
   }
 
   // Center at middle of main monitor
