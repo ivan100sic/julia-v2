@@ -93,7 +93,13 @@ const vec2 JULIA = vec2(-0.835, -0.2321);
 const float DEBUG_SCALEDOWN = 1.f;
 
 const float MAIN_W = 597.f;
+const float MAIN_H = MAIN_W * 9.f / 16.f;
 const float SIDE_W = 526.f;
+const float SIDE_H = SIDE_W * 9.f / 16.f;
+
+const vec2 MAIN_WH = vec2(MAIN_W, MAIN_H);
+const vec2 SIDE_WH = vec2(SIDE_W, SIDE_H);
+
 const vec3 QHD = vec3(2560.f, 1440.f, 0.f) / DEBUG_SCALEDOWN;
 const vec3 FOURK = vec3(3840.f, 2160.f, 0.f) / DEBUG_SCALEDOWN;
 
@@ -105,15 +111,18 @@ vec3 monitorSize(float width) {
 }
 
 vec2 sceneTransform(vec2 screen) {
-  // Compute physical coordinates, relative to top left corner of left monitor
+  // Compute physical coordinates, relative to bottom left corner of main monitor
   vec2 physCoords;
   if (screen.x < QHD.x) {
     // left screen
-    physCoords = screen * monitorSize(SIDE_W).xy / QHD.xy;
+    screen.y -= FOURK.y - QHD.y;
+    physCoords = screen * SIDE_WH / QHD.xy;
+    physCoords.x -= SIDE_W;
+    physCoords.y += MAIN_H - SIDE_H;
   } else if (screen.x < QHD.x + FOURK.x) {
     // main monitor
-    physCoords = (screen - QHD.xz) * monitorSize(MAIN_W).xy / FOURK.xy
-      + monitorSize(SIDE_W).xz;
+    screen.x -= QHD.x;
+    physCoords = screen * monitorSize(MAIN_W).xy / FOURK.xy;
   } else {
     // right screen
     // TODO: implement
@@ -123,7 +132,7 @@ vec2 sceneTransform(vec2 screen) {
   }
 
   // Center at middle of main monitor
-  physCoords -= monitorSize(SIDE_W).xz + monitorSize(MAIN_W).xy / 2.f;
+  physCoords -= monitorSize(MAIN_W).xy / 2.f;
 
   vec2 complexCoords = physCoords * 3.36f / (MAIN_W + 2.f * SIDE_W);
   return complexCoords;
@@ -131,7 +140,6 @@ vec2 sceneTransform(vec2 screen) {
 
 // Square root of number of antialiasing samples 
 const int AA = 8;
-
 
 void mainImage(out vec4 outColor, in vec2 screen) {
   vec4 sum = vec4(0.f);
