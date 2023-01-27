@@ -175,7 +175,7 @@ vec4 huePalette(float steps, float hue) {
   return vec4(sigma3(c + sf), 1.f);
 }
 
-const int MAX_STEPS = 70;
+const int MAX_STEPS = 120;
 const float GAMMA = 0.6;
 
 float juliaDepth(vec2 p, vec2 seed) {
@@ -202,10 +202,10 @@ float juliaDepth(vec2 p, vec2 seed) {
 
 vec4 julia(vec2 p, vec2 seed) {    
   float depth = juliaDepth(p, seed);
-  return huePalette(depth, p.x * 0.5f);
+  return huePalette(depth, p.x * -1. / 3.5f + 0.5f);
 }
 
-const vec2 JULIA = vec2(-0.835, -0.2321);
+const vec2 JULIA = vec2(-1.174, -0.225);
 
 const float DEBUG_SCALEDOWN = 1.f;
 
@@ -252,12 +252,12 @@ vec2 sceneTransform(vec2 screen) {
   // Center at middle of main monitor
   physCoords -= monitorSize(MAIN_W).xy / 2.f;
 
-  vec2 complexCoords = physCoords * 3.36f / (MAIN_W + 2.f * SIDE_W);
+  vec2 complexCoords = physCoords * 3.5f / (MAIN_W + 2.f * SIDE_W);
   return complexCoords;
 }
 
 // Square root of number of antialiasing samples 
-const int AA = 8;
+const int AA = 16;
 
 void mainImage(out vec4 outColor, in vec2 screen) {
   vec4 sum = vec4(0.f);
